@@ -1,0 +1,25 @@
+(use data.queue)
+
+(define (read-number)
+  (string->number (read-line)))
+
+(let ((n (read-number)))
+  (define vec (make-vector (+ n 1) -1))
+  (vector-set! vec 1 1)
+
+  (let loop ((q (list->queue '(1))))
+    (cond ((not (queue-empty? q))
+	   (let* ((top (dequeue! q))
+		  (right (+ top (logcount top)))
+		  (left (- top (logcount top))))
+	     (cond ((and (<= right n)
+			 (= (vector-ref vec right) -1))
+		    (vector-set! vec right (+ (vector-ref vec top) 1))
+		    (enqueue! q right)))
+	     (cond ((and (<= 1 left)
+			 (= (vector-ref vec left) -1))
+		    (vector-set! vec left (+ (vector-ref vec top) 1))
+		    (enqueue! q left)))
+	     (loop q)))))
+
+  (print (vector-ref vec n)))
