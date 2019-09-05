@@ -1,0 +1,26 @@
+(use gauche.array)
+
+(let* ((n (string->number (read-line)))
+       (weights (map string->number (string-split (read-line) #\space)))
+       (total (fold + 0 weights))
+       (max-weight 51)
+       (arr (make-array (shape 0 (+ n 1) 0 (+ (* max-weight n) 1)) #f)))
+  (array-set! arr 0 0 #t)
+
+  (let loop ((weights weights)
+	     (i 1))
+    (cond ((null? weights)
+	   (if (or (= (mod total 2) 1)
+		   (eqv? (array-ref arr n (div total 2)) #f))
+	       (print "impossible")
+	       (print "possible")))
+	  (else
+	   (for-each
+	    (lambda (j)
+	      (let1 pred (- j (car weights))
+		    (if (and (>= pred 0) (array-ref arr (- i 1) pred))
+			(array-set! arr i j #t)))
+	      (if (array-ref arr (- i 1) j)
+		  (array-set! arr i j #t)))
+	    (iota (+ (* max-weight n) 1)))
+	   (loop (cdr weights) (+ i 1))))))
