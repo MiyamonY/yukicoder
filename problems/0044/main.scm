@@ -1,0 +1,15 @@
+(let* ((n (read)))
+  (define vec (make-vector (+ n 1) 0))
+  (vector-set! vec 0 1)
+
+  (print (let loop ((i 1))
+	   (cond ((< n i) (vector-ref vec n))
+		 (else
+		  (let1 num #?=(+ (if (>= (- i 1) 0)
+				      (vector-ref vec (- i 1))
+				      0)
+				  (if (>= (- i 2) 0)
+				      (vector-ref vec (- i 2))
+				      0))
+			(vector-set! vec i num)
+			(loop (+ i 1))))))))
